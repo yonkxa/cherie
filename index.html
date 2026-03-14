@@ -188,6 +188,16 @@ body{background:var(--color-bg);color:var(--color-text);font-family:var(--font-b
 .region-warn{background:rgba(192,131,42,0.12);color:var(--color-warn);border:1px solid rgba(192,131,42,0.25);}
 .gp-warn-box{font-size:10px;color:var(--color-warn);padding:8px 12px;background:rgba(192,131,42,0.07);border:1px solid rgba(192,131,42,0.18);border-radius:var(--radius);margin-bottom:10px;line-height:1.5;}
 .gp-msg{font-size:11px;color:var(--color-text-faint);text-align:center;padding:14px 0;}
+.gp-guide{margin-bottom:14px;padding:10px 13px;background:var(--color-surface2);border:1px solid var(--color-border);border-radius:var(--radius);}
+.gp-guide-title{font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-faint);margin-bottom:7px;}
+.gp-guide-row{display:flex;align-items:flex-start;gap:7px;margin-bottom:5px;}
+.gp-guide-row:last-child{margin-bottom:0;}
+.gp-guide-tag{font-size:9px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;padding:2px 7px;border-radius:99px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+.tag-url{background:rgba(74,158,106,0.1);color:var(--color-success);border:1px solid rgba(74,158,106,0.2);}
+.tag-id{background:rgba(139,0,0,0.1);color:var(--color-accent-soft);border:1px solid rgba(139,0,0,0.2);}
+.tag-no{background:rgba(255,255,255,0.04);color:var(--color-text-faint);border:1px solid var(--color-border);}
+.gp-guide-text{font-size:10px;color:var(--color-text-dim);line-height:1.5;}
+.gp-guide-text code{font-family:monospace;font-size:9.5px;color:var(--color-cream);background:rgba(255,255,255,0.06);padding:1px 5px;border-radius:4px;}
 .gp-msg.error{color:var(--color-accent-soft);}
 
 /* CALCULATOR CARD */
@@ -286,14 +296,14 @@ footer span{color:var(--color-accent-soft);}
       <div class="home-divider"></div>
       <div class="home-nav">
         <div class="home-nav-btn" onclick="showPage('username')">
-          <img src="img1.png" alt="" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:1px solid rgba(139,0,0,0.3);flex-shrink:0;">
+          <img src="img1.jpg" alt="" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:1px solid rgba(139,0,0,0.3);flex-shrink:0;">
           <div>
             <div class="home-nav-label">Membership Checker</div>
             <div class="home-nav-sub">Check group eligibility</div>
           </div>
         </div>
         <div class="home-nav-btn" onclick="showPage('gamepass')">
-          <img src="img2.png" alt="" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:1px solid rgba(139,0,0,0.3);flex-shrink:0;">
+          <img src="img2.jpg" alt="" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:1px solid rgba(139,0,0,0.3);flex-shrink:0;">
           <div>
             <div class="home-nav-label">Gamepass Checker</div>
             <div class="home-nav-sub">Inspect price &amp; calculator</div>
@@ -365,8 +375,23 @@ footer span{color:var(--color-accent-soft);}
         <div class="gp-checker">
           <div class="page-title">Gamepass <span style="color:var(--color-accent-soft)">Checker</span></div>
           <div class="page-subtitle">Inspect price, payout &amp; regional status</div>
+          <div class="gp-guide">
+            <div class="gp-guide-title">accepted formats</div>
+            <div class="gp-guide-row">
+              <span class="gp-guide-tag tag-url">✓ URL</span>
+              <div class="gp-guide-text"><code>roblox.com/game-pass/102478896/name</code></div>
+            </div>
+            <div class="gp-guide-row">
+              <span class="gp-guide-tag tag-id">✓ ID</span>
+              <div class="gp-guide-text"><code>102478896</code> — just the number, nothing else</div>
+            </div>
+            <div class="gp-guide-row">
+              <span class="gp-guide-tag tag-no">✗ No</span>
+              <div class="gp-guide-text">game store links like <code>roblox.com/games/123#!/store</code> won't work — click the gamepass itself first to get its direct link</div>
+            </div>
+          </div>
           <div class="gp-input-row">
-            <input class="gp-input" id="gp-input" type="text" placeholder="Paste gamepass link or ID…"
+            <input class="gp-input" id="gp-input" type="text" placeholder="roblox.com/game-pass/ID/name  or just the ID…"
               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
             <button class="gp-btn" id="gp-btn" onclick="checkGamepass()">Check</button>
           </div>
