@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/api/users/:path*", "destination": "https://users.roblox.com/:path*" },
+    { "source": "/api/groups/:path*", "destination": "https://groups.roblox.com/:path*" },
+    { "source": "/api/thumbs/:path*", "destination": "https://thumbnails.roblox.com/:path*" }
+  ]
+}

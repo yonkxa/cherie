@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>𝐜𝐡𝐞̀𝐫𝐢𝐞 店</title>
+<link rel="icon" type="image/jpeg" href="logo.jpg"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,700;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body:    'Inter', sans-serif;
+  --color-bg:          #0e0608;
+  --color-surface:     #180a0c;
+  --color-surface2:    #210d10;
+  --color-border:      rgba(139,0,0,0.2);
+  --color-accent:      #8B0000;
+  --color-accent-soft: #b22222;
+  --color-cream:       #EFDFBB;
+  --color-success:     #4a9e6a;
+  --color-warn:        #c0832a;
+  --color-text:        #EFDFBB;
+  --color-text-dim:    #c4a882;
+  --color-text-faint:  #6e5040;
+  --radius:    8px;
+  --radius-lg: 14px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;user-select:none;}
+input,textarea{user-select:text;}
+html{scroll-behavior:smooth;}
+body{background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden;}
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:10px 24px;border-bottom:1px solid var(--color-border);background:rgba(14,6,8,0.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
+.topbar-brand{display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer;}
+.logo-wrap{position:relative;width:36px;height:36px;flex-shrink:0;}
+.logo-wrap img{width:36px;height:36px;object-fit:cover;border-radius:50%;border:1.5px solid rgba(139,0,0,0.45);display:block;animation:heartFloat 4s ease-in-out infinite;position:relative;z-index:2;}
+.logo-wrap::before{content:'';position:absolute;inset:-4px;border-radius:50%;background:radial-gradient(circle,rgba(139,0,0,0.35) 0%,transparent 70%);animation:haloPulse 4s ease-in-out infinite;z-index:1;}
+.logo-wrap::after{content:'';position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(139,0,0,0.15);animation:ringExpand 4s ease-in-out infinite;z-index:0;}
+.logo-fallback{display:none;width:36px;height:36px;border-radius:50%;background:var(--color-surface);border:1.5px solid rgba(139,0,0,0.35);align-items:center;justify-content:center;font-size:18px;animation:heartFloat 4s ease-in-out infinite;}
+@keyframes heartFloat{0%,100%{transform:translateY(0) scale(1);}30%{transform:translateY(-3px) scale(1.04);}60%{transform:translateY(1px) scale(0.98);}}
+@keyframes haloPulse{0%,100%{opacity:0.6;transform:scale(1);}50%{opacity:1;transform:scale(1.2);}}
+@keyframes ringExpand{0%,100%{transform:scale(1);opacity:0.4;}50%{transform:scale(1.4);opacity:0;}}
+.brand-name{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--color-cream);letter-spacing:0.02em;line-height:1;}
+.brand-name span{color:var(--color-accent-soft);}
+.topbar-links{display:flex;align-items:center;gap:6px;}
+.social-btn{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text-faint);text-decoration:none;transition:all 0.2s;flex-shrink:0;}
+.social-btn:hover{border-color:var(--color-accent-soft);color:var(--color-cream);background:var(--color-surface2);transform:translateY(-2px);box-shadow:0 4px 10px rgba(139,0,0,0.3);}
+.social-btn svg{width:14px;height:14px;fill:currentColor;}
+.owner-btn{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text-faint);text-decoration:none;font-size:10px;letter-spacing:0.08em;white-space:nowrap;transition:all 0.2s;}
+.owner-btn:hover{border-color:var(--color-accent-soft);color:var(--color-cream);background:var(--color-surface2);transform:translateY(-2px);}
+.owner-dot{width:5px;height:5px;border-radius:50%;background:var(--color-accent-soft);flex-shrink:0;animation:dotPulse 2s ease-in-out infinite;}
+@keyframes dotPulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+/* ── PAGE SHELL ── */
+.page-outer{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:0 24px 60px;}
+
+/* ── HOME PAGE ── */
+#page-home{display:block;}
+#page-username{display:none;}
+#page-gamepass{display:none;}
+
+/* HOME HERO */
+.home-hero{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 130px);padding:40px 0 20px;text-align:center;}
+.logo-main{font-family:var(--font-display);font-size:clamp(2.4rem,6vw,3.8rem);font-weight:700;letter-spacing:0.03em;color:var(--color-cream);line-height:1;margin-bottom:8px;animation:fadeUp 0.9s cubic-bezier(0.4,0,0.2,1) both;}
+.logo-main span{color:var(--color-accent-soft);}
+.tagline{font-size:10px;font-weight:300;letter-spacing:0.26em;text-transform:uppercase;color:var(--color-text-faint);margin-bottom:28px;animation:fadeUp 0.9s 0.1s cubic-bezier(0.4,0,0.2,1) both;}
+.home-divider{width:32px;height:1px;background:linear-gradient(90deg,transparent,var(--color-accent-soft),transparent);margin:0 auto 36px;animation:fadeUp 0.9s 0.18s cubic-bezier(0.4,0,0.2,1) both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* HOME NAV BUTTONS */
+.home-nav{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeUp 0.9s 0.28s cubic-bezier(0.4,0,0.2,1) both;}
+.home-nav-btn{display:flex;flex-direction:column;align-items:center;gap:10px;padding:22px 28px;border-radius:var(--radius-lg);border:1px solid var(--color-border);background:var(--color-surface);cursor:pointer;transition:all 0.22s;min-width:160px;text-decoration:none;}
+.home-nav-btn:hover{border-color:var(--color-accent-soft);background:var(--color-surface2);transform:translateY(-3px);box-shadow:0 8px 24px rgba(139,0,0,0.2);}
+.home-nav-icon{font-size:2rem;line-height:1;}
+.home-nav-label{font-family:var(--font-display);font-size:1.05rem;font-weight:600;color:var(--color-cream);letter-spacing:0.02em;}
+.home-nav-sub{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--color-text-faint);}
+
+/* ── INNER PAGES (username + gamepass) ── */
+.inner-page{padding:32px 0 20px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text-faint);font-size:10px;letter-spacing:0.08em;cursor:pointer;margin-bottom:24px;transition:all 0.2s;}
+.back-btn:hover{border-color:var(--color-accent-soft);color:var(--color-cream);background:var(--color-surface2);}
+.back-btn svg{width:12px;height:12px;fill:currentColor;}
+
+/* USERNAME PAGE LAYOUT */
+.username-layout{display:grid;grid-template-columns:1fr 320px;gap:32px;align-items:start;}
+.username-main{}
+.page-title{font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;color:var(--color-cream);letter-spacing:0.02em;margin-bottom:6px;}
+.page-subtitle{font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--color-text-faint);margin-bottom:22px;}
+
+/* SEARCH */
+.search-wrap{display:flex;gap:8px;width:100%;max-width:500px;margin-bottom:4px;}
+.input-field{flex:1;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);color:var(--color-text);font-family:var(--font-body);font-size:14px;font-weight:300;padding:0 16px;outline:none;height:42px;transition:border-color 0.2s,box-shadow 0.2s;}
+.input-field::placeholder{color:var(--color-text-faint);}
+.input-field:focus{border-color:var(--color-accent);box-shadow:0 0 0 3px rgba(139,0,0,0.1);}
+.btn-check{background:var(--color-accent);color:var(--color-cream);border:none;border-radius:var(--radius);font-family:var(--font-body);font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;padding:0 22px;cursor:pointer;height:42px;transition:background 0.2s,transform 0.1s,box-shadow 0.2s;white-space:nowrap;flex-shrink:0;}
+.btn-check:hover{background:#6b0000;box-shadow:0 4px 14px rgba(139,0,0,0.4);}
+.btn-check:active{transform:scale(0.97);}
+.btn-check:disabled{opacity:0.5;cursor:not-allowed;}
+@keyframes btnPulse{0%{box-shadow:0 0 0 0 rgba(139,0,0,0.5);}70%{box-shadow:0 0 0 10px rgba(139,0,0,0);}100%{box-shadow:0 0 0 0 rgba(139,0,0,0);}}
+.btn-check.loading{animation:btnPulse 0.9s ease infinite;pointer-events:none;}
+
+/* LOADER */
+.loader{display:none;text-align:center;padding:24px 0 6px;}
+.loader.show{display:block;}
+.spinner{width:18px;height:18px;border:2px solid var(--color-border);border-top-color:var(--color-accent-soft);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto 8px;}
+.loader-text{font-size:11px;letter-spacing:0.1em;color:var(--color-text-faint);}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* RESULTS */
+#results{width:100%;max-width:500px;}
+.user-bar{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);margin:18px 0 10px;animation:fadeUp 0.3s ease both;}
+.user-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid var(--color-border);flex-shrink:0;}
+.user-avatar-placeholder{width:36px;height:36px;border-radius:50%;background:var(--color-surface2);border:1px solid var(--color-border);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.user-info{flex:1;min-width:0;}
+.user-name{font-family:var(--font-display);font-size:1rem;font-weight:600;color:var(--color-cream);}
+.user-id{font-size:10px;color:var(--color-text-faint);}
+.buy-btn{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;flex-shrink:0;border:1px solid rgba(139,0,0,0.35);background:rgba(139,0,0,0.12);color:var(--color-accent-soft);text-decoration:none;font-size:9px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap;transition:all 0.2s;}
+.buy-btn:hover{background:rgba(139,0,0,0.22);border-color:var(--color-accent-soft);color:var(--color-cream);transform:translateY(-1px);}
+.section-label{font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--color-text-faint);margin-bottom:8px;}
+.card{display:grid;grid-template-columns:1fr 1fr;gap:7px;animation:fadeUp 0.35s 0.05s ease both;}
+.group-row{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:6px;padding:9px 11px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);transition:background 0.15s,transform 0.15s,box-shadow 0.15s;animation:cardPop var(--delay,0.1s) cubic-bezier(0.4,0,0.2,1) both;}
+.group-row:hover{background:var(--color-surface2);transform:translateY(-1px);box-shadow:0 3px 12px rgba(139,0,0,0.15);}
+.group-top{display:flex;align-items:center;gap:7px;min-width:0;flex:1;}
+.group-icon{width:24px;height:24px;border-radius:5px;object-fit:cover;background:var(--color-surface2);border:1px solid var(--color-border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;}
+.group-name{font-size:11px;font-weight:500;color:var(--color-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.group-right{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+@keyframes cardPop{from{opacity:0;transform:translateY(8px) scale(0.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+.badge{font-size:9px;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;padding:2px 7px;border-radius:99px;white-space:nowrap;}
+.badge-eligible{background:rgba(74,158,106,0.12);color:var(--color-success);border:1px solid rgba(74,158,106,0.22);}
+.badge-none{background:rgba(255,255,255,0.04);color:var(--color-text-faint);border:1px solid var(--color-border);}
+.join-link{font-size:9px;color:var(--color-accent-soft);text-decoration:none;border:1px solid rgba(139,0,0,0.25);border-radius:99px;padding:2px 7px;white-space:nowrap;transition:all 0.18s;}
+.join-link:hover{background:rgba(139,0,0,0.1);border-color:var(--color-accent-soft);}
+.msg{text-align:center;padding:22px 0;font-size:13px;color:var(--color-text-faint);}
+.msg.error{color:var(--color-accent-soft);}
+
+/* PAYOUT SIDEBAR (username page) */
+.payout-sidebar{position:sticky;top:72px;}
+.payout-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:18px 16px;}
+.payout-title{font-family:var(--font-display);font-size:1rem;font-weight:600;color:var(--color-accent-soft);letter-spacing:0.02em;margin-bottom:14px;text-align:center;}
+.payout-table{width:100%;border-collapse:collapse;}
+.payout-table th{font-size:9px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;padding:0 8px 8px;border-bottom:1px solid var(--color-border);color:var(--color-text-faint);text-align:center;width:33.33%;}
+.payout-table th:first-child{text-align:left;color:var(--color-text-dim);}
+.payout-table tbody tr{border-bottom:1px solid rgba(139,0,0,0.07);transition:background 0.12s;}
+.payout-table tbody tr:last-child{border-bottom:none;}
+.payout-table tbody tr:hover{background:var(--color-surface2);}
+.payout-table td{padding:5px 8px;font-size:11px;text-align:center;}
+.payout-table td:first-child{text-align:left;color:var(--color-text-dim);white-space:nowrap;}
+.td-php{font-weight:600;color:var(--color-cream);}
+.td-php2{font-weight:600;color:var(--color-accent-soft);}
+.payout-group-labels{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:10px;}
+.payout-group-label{font-size:9px;padding:4px 8px;border-radius:6px;border:1px solid var(--color-border);color:var(--color-text-faint);line-height:1.4;text-align:center;}
+.payout-group-label b{display:block;font-size:9px;margin-bottom:2px;}
+.label-a{border-color:rgba(239,223,187,0.2);color:var(--color-cream);}
+.label-b{border-color:rgba(139,0,0,0.25);color:var(--color-accent-soft);}
+
+/* ── GAMEPASS PAGE ── */
+.gamepass-layout{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;}
+
+/* GAMEPASS CHECKER */
+.gp-checker{}
+.gp-input-row{display:flex;gap:8px;margin-bottom:12px;}
+.gp-input{flex:1;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);color:var(--color-text);font-family:var(--font-body);font-size:14px;font-weight:300;padding:0 16px;outline:none;height:42px;min-width:0;transition:border-color 0.2s,box-shadow 0.2s;}
+.gp-input::placeholder{color:var(--color-text-faint);}
+.gp-input:focus{border-color:var(--color-accent);box-shadow:0 0 0 3px rgba(139,0,0,0.1);}
+.gp-btn{background:var(--color-accent);color:var(--color-cream);border:none;border-radius:var(--radius);font-family:var(--font-body);font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;padding:0 22px;cursor:pointer;height:42px;flex-shrink:0;transition:background 0.2s,transform 0.1s;white-space:nowrap;}
+.gp-btn:hover{background:#6b0000;}
+.gp-btn:active{transform:scale(0.97);}
+.gp-btn:disabled{opacity:0.45;cursor:not-allowed;}
+.gp-info{display:none;animation:fadeUp 0.3s ease both;}
+.gp-info.show{display:block;}
+.gp-preview{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);margin-bottom:10px;}
+.gp-thumb{width:48px;height:48px;border-radius:8px;object-fit:cover;border:1px solid var(--color-border);flex-shrink:0;}
+.gp-thumb-placeholder{width:48px;height:48px;border-radius:8px;background:var(--color-surface2);border:1px solid var(--color-border);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.gp-meta{flex:1;min-width:0;}
+.gp-name{font-family:var(--font-display);font-size:1.1rem;font-weight:600;color:var(--color-cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gp-sub{font-size:10px;color:var(--color-text-faint);margin-top:2px;}
+.gp-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.gp-stat{padding:10px 12px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);text-align:center;}
+.gp-stat-label{font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--color-text-faint);margin-bottom:4px;}
+.gp-stat-value{font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--color-cream);line-height:1;}
+.gp-stat-sub{font-size:9px;color:var(--color-text-faint);margin-top:2px;}
+.gp-region-row{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);margin-bottom:10px;}
+.gp-region-label{font-size:10px;color:var(--color-text-dim);}
+.gp-region-status{font-size:9px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:2px 9px;border-radius:99px;}
+.region-ok{background:rgba(74,158,106,0.12);color:var(--color-success);border:1px solid rgba(74,158,106,0.22);}
+.region-warn{background:rgba(192,131,42,0.12);color:var(--color-warn);border:1px solid rgba(192,131,42,0.25);}
+.gp-warn-box{font-size:10px;color:var(--color-warn);padding:8px 12px;background:rgba(192,131,42,0.07);border:1px solid rgba(192,131,42,0.18);border-radius:var(--radius);margin-bottom:10px;line-height:1.5;}
+.gp-msg{font-size:11px;color:var(--color-text-faint);text-align:center;padding:14px 0;}
+.gp-msg.error{color:var(--color-accent-soft);}
+
+/* CALCULATOR CARD */
+.calc-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:20px 18px;}
+.calc-card-title{font-family:var(--font-display);font-size:1rem;font-weight:600;color:var(--color-accent-soft);margin-bottom:6px;text-align:center;}
+.calc-card-sub{font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--color-text-faint);text-align:center;margin-bottom:18px;}
+.calc-input-wrap{display:flex;gap:8px;align-items:center;margin-bottom:14px;}
+.calc-input{flex:1;background:var(--color-surface2);border:1px solid var(--color-border);border-radius:var(--radius);color:var(--color-text);font-family:var(--font-body);font-size:15px;font-weight:400;padding:0 14px;outline:none;height:44px;min-width:0;transition:border-color 0.2s,box-shadow 0.2s;}
+.calc-input::placeholder{color:var(--color-text-faint);}
+.calc-input:focus{border-color:var(--color-accent);box-shadow:0 0 0 3px rgba(139,0,0,0.1);}
+.calc-rbx-label{font-size:13px;color:var(--color-text-faint);flex-shrink:0;}
+/* hide number input spinners */
+.calc-input::-webkit-outer-spin-button,.calc-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.calc-input[type=number]{-moz-appearance:textfield;}
+.calc-result{display:none;padding:14px 16px;background:linear-gradient(135deg,rgba(139,0,0,0.1) 0%,rgba(139,0,0,0.04) 100%);border:1px solid rgba(139,0,0,0.22);border-radius:var(--radius);animation:fadeUp 0.25s ease both;}
+.calc-result.show{display:block;}
+.calc-result-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;}
+.calc-result-row:last-of-type{margin-bottom:0;}
+.calc-result-label{font-size:10px;color:var(--color-text-faint);letter-spacing:0.06em;}
+.calc-result-value{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--color-cream);line-height:1;}
+.calc-result-value span{font-size:0.6em;color:var(--color-text-faint);margin-right:2px;}
+.calc-result-note{font-size:9px;color:var(--color-text-faint);margin-top:10px;padding-top:9px;border-top:1px solid rgba(139,0,0,0.12);text-align:center;line-height:1.6;}
+
+/* FOOTER */
+footer{text-align:center;padding-top:40px;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--color-text-faint);}
+footer span{color:var(--color-accent-soft);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .username-layout{grid-template-columns:1fr;}
+  .payout-sidebar{position:static;margin-top:24px;}
+  .gamepass-layout{grid-template-columns:1fr;}
+  .calc-card{margin-top:0;}
+}
+@media(max-width:600px){
+  .topbar{padding:9px 14px;}
+  .brand-name{display:none;}
+  .owner-btn span{display:none;}
+  .owner-btn{padding:5px 8px;}
+  .page-outer{padding:0 14px 40px;}
+  .logo-main{font-size:clamp(2rem,10vw,2.8rem);}
+  .home-nav{flex-direction:column;align-items:center;}
+  .home-nav-btn{width:100%;max-width:300px;flex-direction:row;padding:16px 20px;}
+  .search-wrap{flex-direction:column;}
+  .btn-check{width:100%;padding:13px;text-align:center;}
+  #results{max-width:100%;}
+  .card{grid-template-columns:1fr;}
+  .group-row{flex-wrap:wrap;}
+  .group-top{width:100%;}
+  .group-name{white-space:normal;word-break:break-word;}
+  .group-right{width:100%;justify-content:flex-end;padding-top:2px;}
+  .payout-table td,.payout-table th{padding:4px 5px;font-size:10px;}
+  .gp-input-row{flex-direction:column;}
+  .gp-btn{width:100%;}
+  .gp-stats{grid-template-columns:1fr 1fr;}
+  .calc-input-wrap{flex-wrap:wrap;}
+  .calc-input{width:100%;}
+  .user-bar{flex-wrap:wrap;}
+  .user-info{flex:1;min-width:120px;}
+  .buy-btn{margin-left:auto;}
+}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<header class="topbar">
+  <div class="topbar-brand" onclick="showPage('home')" style="cursor:pointer;">
+    <div class="logo-wrap">
+      <img src="logo.jpg" alt="cherie" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <div class="logo-fallback">🤍</div>
+    </div>
+    <div class="brand-name">𝐜𝐡𝐞̀<span>𝐫𝐢𝐞</span> 店</div>
+  </div>
+  <nav class="topbar-links">
+    <a class="social-btn" href="https://t.me/hourcheries" target="_blank" rel="noopener" title="Telegram">
+      <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+    </a>
+    <a class="social-btn" href="https://discord.gg/fp8wbyT3WN" target="_blank" rel="noopener" title="Discord">
+      <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.03.056a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+    </a>
+    <a class="owner-btn" href="https://t.me/islxnds" target="_blank" rel="noopener">
+      <div class="owner-dot"></div>
+      <span>@islxn</span>
+    </a>
+  </nav>
+</header>
+
+<div class="page-outer">
+
+  <!-- ═══ HOME PAGE ═══ -->
+  <div id="page-home">
+    <div class="home-hero">
+      <div class="logo-main">𝐜𝐡𝐞̀<span>𝐫𝐢𝐞</span> 店</div>
+      <div class="tagline">Roblox Tools &amp; Community</div>
+      <div class="home-divider"></div>
+      <div class="home-nav">
+        <div class="home-nav-btn" onclick="showPage('username')">
+          <img src="img1.png" alt="" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:1px solid rgba(139,0,0,0.3);flex-shrink:0;">
+          <div>
+            <div class="home-nav-label">Membership Checker</div>
+            <div class="home-nav-sub">Check group eligibility</div>
+          </div>
+        </div>
+        <div class="home-nav-btn" onclick="showPage('gamepass')">
+          <img src="img2.png" alt="" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:1px solid rgba(139,0,0,0.3);flex-shrink:0;">
+          <div>
+            <div class="home-nav-label">Gamepass Checker</div>
+            <div class="home-nav-sub">Inspect price &amp; calculator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ USERNAME PAGE ═══ -->
+  <div id="page-username">
+    <div class="inner-page">
+      <div class="back-btn" onclick="showPage('home')">
+        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        Back
+      </div>
+      <div class="username-layout">
+        <div class="username-main">
+          <div class="page-title">𝐜𝐡𝐞̀<span style="color:var(--color-accent-soft)">𝐫𝐢𝐞</span> 店</div>
+          <div class="page-subtitle">Community Membership Checker</div>
+          <div class="search-wrap">
+            <input class="input-field" id="username-input" type="text" placeholder="Enter Roblox username…"
+              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+            <button class="btn-check" id="check-btn" onclick="checkMembership()">Check</button>
+          </div>
+          <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <div class="loader-text">Looking up user…</div>
+          </div>
+          <div id="results"></div>
+        </div>
+        <aside class="payout-sidebar">
+          <div class="payout-card">
+            <div class="payout-title">── .✦ payout rates ୨ৎ</div>
+            <div class="payout-group-labels">
+              <div class="payout-group-label label-a"><b>Group A</b>qt · caras · 1cy<br>mod corp · かわいい妖精</div>
+              <div class="payout-group-label label-b"><b>Group B</b>cladeubelle · dreamdaze<br>luvcure · quiescielle</div>
+            </div>
+            <table class="payout-table">
+              <thead><tr><th>Robux</th><th>Group A</th><th>Group B</th></tr></thead>
+              <tbody>
+                <tr><td>100 R$</td><td class="td-php">₱69</td><td class="td-php2">₱70</td></tr>
+                <tr><td>200 R$</td><td class="td-php">₱99</td><td class="td-php2">₱110</td></tr>
+                <tr><td>300 R$</td><td class="td-php">₱140</td><td class="td-php2">₱155</td></tr>
+                <tr><td>400 R$</td><td class="td-php">₱170</td><td class="td-php2">₱195</td></tr>
+                <tr><td>500 R$</td><td class="td-php">₱205</td><td class="td-php2">₱235</td></tr>
+                <tr><td>600 R$</td><td class="td-php">₱240</td><td class="td-php2">₱270</td></tr>
+                <tr><td>700 R$</td><td class="td-php">₱275</td><td class="td-php2">₱295</td></tr>
+                <tr><td>800 R$</td><td class="td-php">₱300</td><td class="td-php2">₱345</td></tr>
+                <tr><td>900 R$</td><td class="td-php">₱345</td><td class="td-php2">₱380</td></tr>
+                <tr><td>1000 R$</td><td class="td-php">₱365</td><td class="td-php2">₱405</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ GAMEPASS PAGE ═══ -->
+  <div id="page-gamepass">
+    <div class="inner-page">
+      <div class="back-btn" onclick="showPage('home')">
+        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        Back
+      </div>
+      <div class="gamepass-layout">
+        <!-- LEFT: checker -->
+        <div class="gp-checker">
+          <div class="page-title">Gamepass <span style="color:var(--color-accent-soft)">Checker</span></div>
+          <div class="page-subtitle">Inspect price, payout &amp; regional status</div>
+          <div class="gp-input-row">
+            <input class="gp-input" id="gp-input" type="text" placeholder="Paste gamepass link or ID…"
+              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+            <button class="gp-btn" id="gp-btn" onclick="checkGamepass()">Check</button>
+          </div>
+          <div class="gp-info" id="gp-info">
+            <div id="gp-preview"></div>
+            <div class="gp-stats" id="gp-stats"></div>
+            <div id="gp-region-row"></div>
+            <div id="gp-extra-msg"></div>
+          </div>
+          <div class="gp-msg" id="gp-msg" style="display:none;"></div>
+        </div>
+        <!-- RIGHT: calculator -->
+        <div class="calc-card">
+          <div class="calc-card-title">── .✦ price calculator ✦ ──</div>
+          <div class="calc-card-sub">how much to set on your gamepass</div>
+          <div class="calc-input-wrap">
+            <input class="calc-input" id="calc-input" type="number" min="1" max="1000000"
+              placeholder="Robux you want to receive… (max 1M)" oninput="calcPrice()"/>
+            <span class="calc-rbx-label">R$</span>
+          </div>
+          <div class="calc-result" id="calc-result">
+            <div class="calc-result-row">
+              <span class="calc-result-label">Set gamepass price to</span>
+              <div class="calc-result-value"><span>R$</span><span id="calc-price-out">—</span></div>
+            </div>
+            <div class="calc-result-row">
+              <span class="calc-result-label">You will receive</span>
+              <div class="calc-result-value" style="color:var(--color-accent-soft)"><span>R$</span><span id="calc-receive-out">—</span></div>
+            </div>
+            <div class="calc-result-note" id="calc-note"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 𝐜𝐡𝐞̀𝐫𝐢𝐞 店 &nbsp;|&nbsp; @islxn — <span>all rights reserved</span></footer>
+</div>
+
+<script>
+/* ─── BACKGROUND ── */
+(function(){
+  const canvas=document.getElementById('bg-canvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,t=0;
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  function loop(){
+    ctx.clearRect(0,0,W,H);t+=0.006;
+    ctx.fillStyle='#0e0608';ctx.globalAlpha=1;ctx.fillRect(0,0,W,H);
+    [{bx:W*.15+Math.sin(t*.38)*90,by:H*.25+Math.cos(t*.28)*70,r:W*.42,c:'rgba(139,0,0,0.18)'},{bx:W*.82+Math.cos(t*.32)*75,by:H*.65+Math.sin(t*.42)*85,r:W*.35,c:'rgba(139,0,0,0.13)'},{bx:W*.5+Math.sin(t*.22)*100,by:H*.12+Math.cos(t*.48)*45,r:W*.30,c:'rgba(239,223,187,0.03)'}].forEach(b=>{
+      const g=ctx.createRadialGradient(b.bx,b.by,0,b.bx,b.by,b.r);
+      g.addColorStop(0,b.c);g.addColorStop(1,'transparent');
+      ctx.fillStyle=g;ctx.globalAlpha=1;ctx.fillRect(0,0,W,H);
+    });
+    const sy=((Math.sin(t*.55)+1)/2)*H;
+    const sg=ctx.createLinearGradient(0,sy-55,0,sy+55);
+    sg.addColorStop(0,'rgba(139,0,0,0)');sg.addColorStop(.5,'rgba(139,0,0,0.04)');sg.addColorStop(1,'rgba(139,0,0,0)');
+    ctx.fillStyle=sg;ctx.globalAlpha=1;ctx.fillRect(0,sy-55,W,110);
+    requestAnimationFrame(loop);
+  }
+  window.addEventListener('resize',resize);resize();loop();
+})();
+
+/* ─── SPARKLES ── */
+(function(){
+  const colors=['#8B0000','#b22222','#6b0000','#EFDFBB'];
+  let last=0;
+  document.addEventListener('mousemove',e=>{
+    const now=Date.now();if(now-last<18)return;last=now;
+    const s=document.createElement('div');
+    const size=Math.random()*7+5,color=colors[Math.floor(Math.random()*colors.length)];
+    const angle=Math.random()*360,drift=Math.random()*8+3;
+    s.style.cssText=`position:fixed;left:${e.clientX}px;top:${e.clientY}px;width:${size}px;height:${size}px;border-radius:50%;background:${color};pointer-events:none;z-index:9999;transform:translate(-50%,-50%) scale(1);opacity:1;transition:transform .55s ease-out,opacity .55s ease-out;box-shadow:0 0 ${size+4}px ${color},0 0 ${size+8}px ${color};`;
+    document.body.appendChild(s);
+    requestAnimationFrame(()=>{s.style.transform=`translate(calc(-50% + ${Math.cos(angle)*drift}px),calc(-50% + ${Math.sin(angle)*drift}px)) scale(0)`;s.style.opacity='0';});
+    setTimeout(()=>s.remove(),580);
+  });
+})();
+
+/* ─── TOUCH RIPPLE ── */
+document.addEventListener('touchstart',e=>{
+  const t=e.touches[0];const r=document.createElement('div');
+  r.style.cssText=`position:fixed;left:${t.clientX}px;top:${t.clientY}px;width:4px;height:4px;border-radius:50%;background:rgba(139,0,0,0.5);transform:translate(-50%,-50%) scale(1);pointer-events:none;z-index:9999;transition:transform .6s ease,opacity .6s ease;`;
+  document.body.appendChild(r);
+  requestAnimationFrame(()=>{r.style.transform='translate(-50%,-50%) scale(40)';r.style.opacity='0';});
+  setTimeout(()=>r.remove(),650);
+},{passive:true});
+
+/* ─── PAGE NAVIGATION ── */
+function showPage(name){
+  document.getElementById('page-home').style.display='none';
+  document.getElementById('page-username').style.display='none';
+  document.getElementById('page-gamepass').style.display='none';
+  document.getElementById('page-'+name).style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ─── HELPERS ── */
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+async function robloxFetch(url){
+  const path=url
+    .replace('https://users.roblox.com','/api/users')
+    .replace('https://groups.roblox.com','/api/groups')
+    .replace('https://thumbnails.roblox.com','/api/thumbs');
+  const res=await fetch(path);
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  return res.json();
+}
+
+/* ─── GROUPS ── */
+const GROUPS=[
+  {id:9508644,   name:'luvcure'},
+  {id:32516090,  name:'cladeubelle'},
+  {id:33788013,  name:'dreamdaze'},
+  {id:34479044,  name:'quiescielle'},
+  {id:34640253,  name:'aurelia'},
+  {id:35206005,  name:'qt'},
+  {id:8215026,   name:'Caras'},
+  {id:5838002,   name:'1cy'},
+  {id:1081179215,name:'Mod Corp'},
+  {id:12218148,  name:'かわいい妖精'},
+];
+
+/* ─── MEMBERSHIP CHECKER ── */
+async function checkMembership(){
+  const username=document.getElementById('username-input').value.trim();
+  if(!username)return;
+  const btn=document.getElementById('check-btn');
+  const loader=document.getElementById('loader');
+  const results=document.getElementById('results');
+  btn.disabled=true;btn.classList.add('loading');
+  loader.classList.add('show');results.innerHTML='';
+  try{
+    const userPost=await fetch('/api/users/v1/usernames/users',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({usernames:[username],excludeBannedUsers:false})
+    });
+    if(!userPost.ok) throw new Error('HTTP '+userPost.status);
+    const userData=await userPost.json();
+    if(!userData.data||userData.data.length===0){
+      results.innerHTML=`<div class="msg error">No user found for "<b>${escHtml(username)}</b>".</div>`;return;
+    }
+    const user=userData.data[0];const userId=user.id;
+    let avatarUrl=null;
+    try{const av=await robloxFetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=48x48&format=Png`);avatarUrl=av.data?.[0]?.imageUrl||null;}catch{}
+    let allGroups=[];
+    try{const gr=await robloxFetch(`https://groups.roblox.com/v2/users/${userId}/groups/roles`);allGroups=gr.data||[];}catch{}
+    const ids=GROUPS.map(g=>g.id).join(',');
+    let thumbMap={};
+    try{const tr=await robloxFetch(`https://thumbnails.roblox.com/v1/groups/icons?groupIds=${ids}&size=150x150&format=Png`);(tr.data||[]).forEach(t=>{thumbMap[t.targetId]=t.imageUrl;});}catch{}
+    const avatarHtml=avatarUrl?`<img class="user-avatar" src="${escHtml(avatarUrl)}" alt="avatar">`:`<div class="user-avatar-placeholder">👤</div>`;
+    let rows='';
+    GROUPS.forEach((g,i)=>{
+      const membership=allGroups.find(m=>m.group.id===g.id);
+      const thumb=thumbMap[g.id];
+      const iconHtml=thumb?`<img class="group-icon" src="${escHtml(thumb)}" alt="">`:`<div class="group-icon">🎮</div>`;
+      const delay=(i*0.04+0.08).toFixed(2);
+      rows+=membership
+        ?`<div class="group-row" style="--delay:${delay}s"><div class="group-top">${iconHtml}<div class="group-name">${escHtml(g.name)}</div></div><div class="group-right"><span class="badge badge-eligible">Eligible</span></div></div>`
+        :`<div class="group-row" style="--delay:${delay}s"><div class="group-top">${iconHtml}<div class="group-name">${escHtml(g.name)}</div></div><div class="group-right"><span class="badge badge-none">Not joined</span><a class="join-link" href="https://www.roblox.com/groups/${g.id}" target="_blank" rel="noopener">Join ↗</a></div></div>`;
+    });
+    results.innerHTML=`<div class="user-bar">${avatarHtml}<div class="user-info"><div class="user-name">${escHtml(user.displayName||user.name)}</div><div class="user-id">@${escHtml(user.name)}</div></div><a class="buy-btn" href="https://t.me/islxn" target="_blank" rel="noopener">🛒 Buy Robux</a></div><p class="section-label">Membership status</p><div class="card">${rows}</div>`;
+  }catch(err){
+    results.innerHTML=`<div class="msg error">Something went wrong. Try again.<br><small>${escHtml(err.message)}</small></div>`;
+  }finally{
+    btn.disabled=false;btn.classList.remove('loading');loader.classList.remove('show');
+  }
+}
+document.getElementById('username-input').addEventListener('keydown',e=>{if(e.key==='Enter')checkMembership();});
+
+/* ─── GAMEPASS CHECKER ── */
+function parseGamepassId(raw){
+  raw=raw.trim();
+  const m=raw.match(/game-pass(?:es)?\/(\d+)/i);
+  if(m)return m[1];
+  if(/^\d+$/.test(raw))return raw;
+  return null;
+}
+
+async function checkGamepass(){
+  const raw=document.getElementById('gp-input').value;
+  const gpId=parseGamepassId(raw);
+  const infoEl=document.getElementById('gp-info');
+  const msgEl=document.getElementById('gp-msg');
+  const btn=document.getElementById('gp-btn');
+  infoEl.classList.remove('show');
+  msgEl.style.display='none';msgEl.className='gp-msg';
+  if(!gpId){
+    msgEl.textContent='Paste a valid gamepass link or ID.';
+    msgEl.classList.add('error');msgEl.style.display='block';return;
+  }
+  btn.disabled=true;btn.textContent='…';
+  try{
+    // roproxy = CORS-open mirror of apis.roblox.com, no auth needed, works everywhere
+    const gpRes=await fetch(`https://apis.roproxy.com/game-passes/v1/game-passes/${gpId}/product-info`);
+    if(!gpRes.ok) throw new Error('Gamepass not found (HTTP '+gpRes.status+'). Check the ID or link.');
+    const info=await gpRes.json();
+
+    /* Thumbnail via Netlify proxy */
+    let thumbUrl=null;
+    try{
+      const tr=await robloxFetch(`https://thumbnails.roblox.com/v1/game-passes?gamePassIds=${gpId}&size=150x150&format=Png`);
+      thumbUrl=tr.data?.[0]?.imageUrl||null;
+    }catch{}
+
+    const name=info.Name||'Unknown Gamepass';
+    const isForSale=info.IsForSale===true;
+    const price=info.PriceInRobux??null;
+    const received=(price!==null&&price>0)?Math.floor(price*0.70):null;
+    /* MinimumMembershipLevel > 0 = Premium-only = regional pricing is on */
+    const isPremiumOnly=(info.MinimumMembershipLevel??0)>0;
+
+    const thumbHtml=thumbUrl?`<img class="gp-thumb" src="${escHtml(thumbUrl)}" alt="">`:`<div class="gp-thumb-placeholder">🎮</div>`;
+    const saleHtml=isForSale?`<span style="color:var(--color-success);font-size:10px;">● On Sale</span>`:`<span style="color:var(--color-text-faint);font-size:10px;">○ Off Sale</span>`;
+
+    document.getElementById('gp-preview').innerHTML=`<div class="gp-preview">${thumbHtml}<div class="gp-meta"><div class="gp-name">${escHtml(name)}</div><div class="gp-sub">ID: ${escHtml(gpId)} &nbsp;·&nbsp; ${saleHtml}</div></div></div>`;
+
+    const priceHtml=price!==null?`<div class="gp-stat-value">${price.toLocaleString()}</div><div class="gp-stat-sub">buyer pays</div>`:`<div class="gp-stat-value" style="color:var(--color-text-faint)">—</div><div class="gp-stat-sub">not priced</div>`;
+    const recvHtml=received!==null?`<div class="gp-stat-value" style="color:var(--color-accent-soft)">${received.toLocaleString()}</div><div class="gp-stat-sub">you receive</div>`:`<div class="gp-stat-value" style="color:var(--color-text-faint)">—</div><div class="gp-stat-sub">—</div>`;
+
+    document.getElementById('gp-stats').innerHTML=`<div class="gp-stat"><div class="gp-stat-label">Price (R$)</div>${priceHtml}</div><div class="gp-stat"><div class="gp-stat-label">Received (R$)</div>${recvHtml}</div>`;
+    document.getElementById('gp-region-row').innerHTML=`<div class="gp-region-row"><span class="gp-region-label">Regional Pricing</span><span class="gp-region-status ${isPremiumOnly?'region-warn':'region-ok'}">${isPremiumOnly?'⚠ Enabled':'✓ Disabled'}</span></div>`;
+    document.getElementById('gp-extra-msg').innerHTML=isPremiumOnly?`<div class="gp-warn-box">⚠ Regional / Premium pricing is active. Disable it in your gamepass settings — otherwise buyers in different regions pay different prices.</div>`:'';
+
+    infoEl.classList.add('show');
+  }catch(err){
+    msgEl.textContent=err.message||'Could not load gamepass. Check the link or ID.';
+    msgEl.classList.add('error');msgEl.style.display='block';
+  }finally{
+    btn.disabled=false;btn.textContent='Check';
+  }
+}
+document.getElementById('gp-input').addEventListener('keydown',e=>{if(e.key==='Enter')checkGamepass();});
+
+/* ─── CALCULATOR ── */
+function calcPrice(){
+  const raw=document.getElementById('calc-input').value;
+  const resultEl=document.getElementById('calc-result');
+  let wanted=parseInt(raw,10);
+  if(!raw||isNaN(wanted)||wanted<1){resultEl.classList.remove('show');return;}
+  if(wanted>1000000){wanted=1000000;document.getElementById('calc-input').value=1000000;}
+  const price=Math.ceil(wanted/0.70);
+  const received=Math.floor(price*0.70);
+  const diff=received-wanted;
+  document.getElementById('calc-price-out').textContent=price.toLocaleString();
+  document.getElementById('calc-receive-out').textContent=received.toLocaleString();
+  let note=`Set your gamepass to <strong>R$ ${price.toLocaleString()}</strong> → Roblox takes 30%, you receive <strong>R$ ${received.toLocaleString()}</strong>.`;
+  if(diff>0)note+=` <em>(+${diff} R$ from rounding)</em>`;
+  document.getElementById('calc-note').innerHTML=note;
+  resultEl.classList.add('show');
+}
+</script>
+</body>
+</html>
